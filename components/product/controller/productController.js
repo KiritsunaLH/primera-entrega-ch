@@ -82,32 +82,6 @@ export default class Container {
         return this.products
     }
 
-    newProduct(newProd){
-        let data = fs.readFileSync('../../../products.json')
-        let prodArr = JSON.parse(data)
-        
-        try {
-            let exists=0
-            for (let i = 0; i < prodArr.length; i++) {
-                const elem = prodArr[i];
-                if (exists <= elem.id){
-                    exists =  (elem.id+1)
-                }
-            }
-            newProd.price = Number(newProd.price)
-            let newProdId = {id: Number(exists)}
-
-            let prodAdd = Object.assign(newProdId, newProd)
-            console.log(prodAdd);
-            prodArr.push(prodAdd)
-            let jsonData = JSON.stringify(prodArr,null,2)
-            let write = fs.writeFileSync('./prods.json', jsonData)
-            return prodAdd;
-        } catch (error) {
-            return 'Error en NewProd'
-        }
-    }
-
     async deleteById(id) {
         try {
             const curProducts = this.products.filter( prod => prod.id !== id)
