@@ -1,103 +1,66 @@
-import fs from 'fs';
+import Product from '../model/product.js'
+import {saveProd, filterProdId, filterProds, updateProdById, delProdById} from '../services/productService.js'
+import {request, response} from 'express'
+import { v4 as uuidv4 } from 'uuid';
 
-export default class Container {
-    
-    constructor(url) {
-        this.url = url
-        this.products = []
-    }
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const myJson = require("../../../utils/products/products.json");
 
-    async save(product) {
-        try {
-            const id = this.product.length + 1
-            this.products.push({...product, id})
-            await fs.promises.writeFile( this.path, JSON.stringify(this.products, null, 2))
-            return id
-        } catch (error) {
-            console.log("Error from save", error)
+const getMyJson = (req, res) => {
+    res.send(myJson);
+}
+
+async function prodGet(req = request, res = response, next) {
+    const {id} = req.params
+    let resp
+    if (id !== undefined) {
+        const product = filterProdId(id)
+        if (product === undefined) {
+            return res.status(404).json({
+                error: -1,
+                msg: `Product with the id: ${id} doesn't exist`})
         }
+        resp = product 
+    } else {
+        resp = filterProds()
     }
+    res.json(resp)
+}
 
-    async update(product) {
-        let curId = 0
-        try {
-            let res = []
-            let data = await this.getAll()
-            for (const key in data) {
-                if (data[key].id == product.id) {
-                    curId = 1;
-                    res = await this.deleteById(product.id)
-                }
-            }
-            if(curId == 1) {
-                res.push(product);
-                let content = JSON.stringify(res, null, 2)
-                await fs.promises.writeFile(this.url, content) 
+async function prodPost(req = request, res = response, next) {
+    const {title, desc, code, thumb, price, stock} = req.body
+    const product = new Product(uuidv4(), title, desc, code, thumb, price, stock)
+    const id = await saveProd(product)
+    res.json({id})
+}
 
-                return product.id
-            }else {
-                return "This product doesn't exist"
-            }
-        } catch (error) {
-            console.log ("Error from Update", error)
-        }
+async function prodPut(req = request, res = response, next) {
+    const {id} = req.params;
+    const {title, desc, code, thumb, price, stock} = req.body
+    const product = await updateProdById(id, {title, desc, code, thumb, price, stock})
+    if (product === undefined) {
+        return res.status(404).json({
+            error: -1,
+            msg: `Product with the id: ${id} doesn't exist`})
     }
+    res.json(product)
+}
 
-    async readFileContainer() {
-        try {
-            const file = await fs.promises.readFile(this.url, 'utf-8')
-            if (file != "")
-                return JSON.parse(file)
-            else 
-                return []
-        } catch (error) {
-            console.log("Error from readFileContainer", error)
-        }
+async function prodDelete(req = request, res = response, next) {
+    const {id} = req.params;
+    const product = await delProdById(id)
+    if (product === undefined) {
+        return res.status(404).json({
+            error: -1,
+            msg: `Product with the id: ${id} doesn't exist`})
     }
+}
 
-    getById(idProd) {
-        let data = fs.readFileSync('../../../products.json')
-        let prods = JSON.parse(data)
-        console.log(idProd.id);
-        try {
-            let counter = 0
-            prods.forEach(elem => {
-                if (Number(elem.id) === Number(idProd.id) ) {
-                    counter++
-                }
-            });
-            if (counter != 0) {
-                let prodI = prods.filter(prod => Number(prod.id) === Number(idProd.id))
-                return prodI
-            } else {
-                return 'error with id input'
-            }
-            
-        } catch (error) {
-            console.log('Error in getById');
-        }
-    }
-
-    getAll() {
-        return this.products
-    }
-
-    async deleteById(id) {
-        try {
-            const curProducts = this.products.filter( prod => prod.id !== id)
-            this.products = curProducts
-            await fs.promises.writeFile(this.url, JSON.stringify(this.products, null, 2))
-        } catch (error) {
-            console.log("error from deleteById", error)
-        }
-    }
-    
-    async deleteAll() {
-        try {
-            await fs.promises.writeFile(`${this.url}`, '[]');
-            this.products = []
-        } catch (error) {
-            console.log("error from deleteAll", error)
-        }
-    }
+export {
+    getMyJson,
+    prodGet,
+    prodPost,
+    prodPut,
+    prodDelete
 }
