@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Final project 1st entry</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+</head>
+
+<body onload="init()">
+
+    <div class="container">
+        <div>
+        <form action="" method="post" id="my-form">
+            <div class="form-group">
+                <label for="titleInput">Name of the product</label>
+                <input type="text" class="form-control" id="titleInput" name="titleInput"
+                    placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label for="priceInput">Product price</label>
+                <input type="text" class="form-control" id="priceInput" name="priceInput"
+                    placeholder="Insert price">
+            </div>
+            <div class="form-group">
+                <label for="thumbnailInput">Product image</label>
+                <input type="text" class="form-control" id="thumbnailInput" name="thumbnailInput"
+                    placeholder="Add image"
+                    value="">
+                <a href= "https://img.icons8.com/ios/50/000000/add-image.png" target="blank"> + photos</a>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+    </div>
+
+    </div>
+
+
+    <script>
+        const myForm = document.getElementById("my-form");
+
+        const table = document.querySelector("#my-table tbody");
+        const tableMessages = document.getElementById("my-table-message");
+
+        const submitForm = (e) => {
+            ev.preventDefault();
+            const product = {
+                title: document.getElementById('titleInput').value,
+                price: document.getElementById('priceInput').value,
+                thumb: document.getElementById('thumbnailInput').value,
+                id: 1,
+                erase: false,
+            }
+ 
+        }
+
+        function init() {
+
+            myForm.addEventListener('submit', submitForm);
+
+            fetch('api/products')
+            .then(res => res.json())
+            .then(function(data){ console.log( data) })
+
+        }
+     
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>
