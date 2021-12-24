@@ -1,11 +1,11 @@
-import Product from '../model/product.js'
-import {saveProd, filterProdId, filterProds, updateProdById, delProdById} from '../services/productService.js'
+import Product from '../components/product/model/product.js'
+import {saveProd, filterProdId, filterProds, updateProdById, delProdById} from '../components/product/services/productService.js'
 import {request, response} from 'express'
 import { v4 as uuidv4 } from 'uuid';
 
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const myJson = require("../../../utils/products/products.json");
+const myJson = require("../resources/products.json");
 
 const getMyJson = (req, res) => {
     res.send(myJson);

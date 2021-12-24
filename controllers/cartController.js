@@ -1,9 +1,9 @@
 import {request, response} from 'express'
-import {newCart,addProdToCart,findProdById,delCartProdById,delCartById} from '../services/cartService.js'
+import {newCart,addProdToCart,findProdById,delCartProdById,delCartById} from '../components/cart/services/cartService.js'
 
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const myCartJson = require("../../../utils/cart/cart.json");
+const myCartJson = require("../resources/cart.json");
 
 function getMyCartJson(req, res) {
     res.send(myCartJson);
